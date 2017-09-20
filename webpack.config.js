@@ -5,31 +5,11 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //TODO
 
 const isProd = (process.env.NODE_ENV === 'production');
 
 console.log(process.env.NODE_ENV);
-
-const CSSloaders = [
-    {
-        loader: 'css-loader',
-    },
-    {
-        loader: 'postcss-loader',
-        options: {
-            plugins: function () {
-                return [
-                    require('autoprefixer')
-                ];
-            }
-        }
-    },
-    {
-        loader: 'sass-loader?outputStyle=expanded' +
-        'includePaths[]=' +
-        (encodeURIComponent(path.resolve('./node_modules')))
-    },
-];
 
 const srcFolder = path.resolve(__dirname, 'src'),
     publicFolder = path.resolve(__dirname, 'public');
@@ -60,6 +40,7 @@ if (isProd) {
             "ascii_only": true
         }
     }));
+
 }
 
 
@@ -114,7 +95,30 @@ module.exports = {
                 exclude: /node_modules/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    use: CSSloaders,
+                    use:
+                    [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                minimize: isProd
+                            }
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                plugins: function () {
+                                    return [
+                                        require('autoprefixer')
+                                    ];
+                                }
+                            }
+                        },
+                        {
+                            loader: 'sass-loader?outputStyle=expanded' +
+                            'includePaths[]=' +
+                            (encodeURIComponent(path.resolve('./node_modules')))
+                        },
+                    ],
                 }),
 
             }
@@ -123,6 +127,5 @@ module.exports = {
 
     watch: !isProd,
     devtool: 'source-map',
-
 
 };
