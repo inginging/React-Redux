@@ -32,23 +32,23 @@ const CSSloaders = [
 ];
 
 const srcFolder = path.resolve(__dirname, 'src'),
-    distFolder = path.resolve(__dirname, 'dist');
+    publicFolder = path.resolve(__dirname, 'public');
 
 // Webpack Clean Options
 // the path(s) that should be cleaned
 const cleanOptions = {
-    root:     __dirname,
+    root:     publicFolder,
     verbose:  true,
     dry:      false
 };
 
 const plugins = [
-    new CleanWebpackPlugin('dist', cleanOptions),
+    new CleanWebpackPlugin(['fonts','img'], cleanOptions),
     new ExtractTextPlugin({ filename: '../css/[name].bundle.css' }),
     new CopyWebpackPlugin([
-        { from: srcFolder + '/img', to: distFolder + '/img' },
-        { from: srcFolder + '/fonts', to: distFolder + '/fonts' },
-        { from: srcFolder + '/*.html', to: distFolder }
+        { from: srcFolder + '/img', to: publicFolder + '/img' },
+        { from: srcFolder + '/fonts', to: publicFolder + '/fonts' },
+        { from: srcFolder + '/*.html', to: publicFolder }
     ]),
 
 ];
@@ -66,9 +66,9 @@ if (isProd) {
 module.exports = {
     devServer: {
         port: 8080,
-        contentBase: distFolder,
-        outputPath: distFolder,
-        publicPath: distFolder
+        contentBase: publicFolder,
+        outputPath: publicFolder + '/',
+        publicPath: '/',
     },
     context: srcFolder,
 
@@ -83,9 +83,9 @@ module.exports = {
     },
 
     output: {
-        path: distFolder + '/js',
-        filename: '[name].bundle.js',
-        publicPath: distFolder
+        path: publicFolder,
+        filename: 'js/[name].bundle.js',
+        publicPath: '/public/'
     },
 
     // Webpack plugins
